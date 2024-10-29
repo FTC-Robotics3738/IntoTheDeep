@@ -161,11 +161,11 @@ public class Starterbot2025Mecanum extends LinearOpMode {
     // Determining movement based on gamepad inputs
     FB = -gamepad1.left_stick_y;
     Strafe = gamepad1.left_stick_x;
-    Turn = gamepad1.right_stick_x;
-    leftFrontPower = (FB - Strafe * 0.7) - Turn;
-    rightFrontPower = FB + Strafe * 0.7 + Turn;
-    leftBackPower = (FB + Strafe * 1) - Turn;
-    rightBackPower = (FB - Strafe * 1) + Turn;
+    Turn = -gamepad1.right_stick_x;
+    leftFrontPower = (FB - math.abs(Strafe) * 0.7) - Turn;
+    rightFrontPower = FB + math.abs(Strafe) * 0.7 + Turn;
+    leftBackPower = (FB + math.abs(Strafe) * 1) - Turn;
+    rightBackPower = (FB - math.abs(Strafe) * 1) + Turn;
     // The below section "clips" the values to remain within the expected range
     max = JavaUtil.maxOfList(JavaUtil.createListWith(Math.abs(leftFrontPower), Math.abs(rightFrontPower), Math.abs(leftBackPower), Math.abs(rightBackPower)));
     if (max > 1) {
