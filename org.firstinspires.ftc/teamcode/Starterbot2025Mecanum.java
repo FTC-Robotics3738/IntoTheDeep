@@ -16,6 +16,7 @@ public class Starterbot2025Mecanum extends LinearOpMode {
   private DcMotor backLeft;
   private DcMotor arm;
   private DcMotor wrist;
+  private DcMotor wrist2;
   private Servo claw;
   private CRServo intake;
 
@@ -46,12 +47,14 @@ public class Starterbot2025Mecanum extends LinearOpMode {
     backLeft = hardwareMap.get(DcMotor.class, "backLeft");
     arm = hardwareMap.get(DcMotor.class, "arm");
     wrist = hardwareMap.get(DcMotor.class, "wrist");
+    wrist2 = hardwareMap.get(DcMotor.class, "wrist2");
     claw = hardwareMap.get(Servo.class, "claw");
     intake = hardwareMap.get(CRServo.class, "intake");
 
     // Put initialization blocks here.
     frontLeft.setDirection(DcMotor.Direction.REVERSE);
     backRight.setDirection(DcMotor.Direction.REVERSE);
+    wrist2.setDirection(DcMotor.Direction.REVERSE);
     frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -82,10 +85,13 @@ public class Starterbot2025Mecanum extends LinearOpMode {
         TELEMETRY();
         arm.setTargetPosition(targetArm);
         wrist.setTargetPosition(targetWrist);
+        wrist2.setTargetPosition(targetWrist);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(1);
         wrist.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wrist2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wrist.setPower(1);
+        wrist2.setPower(1);
       }
     }
   }
@@ -96,21 +102,27 @@ public class Starterbot2025Mecanum extends LinearOpMode {
   private void GAMEPAD_INPUT_STATE() {
     if (gamepad1.a) {
       currentState = INTAKE;
-    } else if (gamepad1.b && !lastGrab) {
+    } 
+    else if (gamepad1.b && !lastGrab) {
       if (currentState.equals(WALL_GRAB)) {
         currentState = WALL_UNHOOK;
-      } else {
+      } 
+      else {
         currentState = WALL_GRAB;
       }
-    } else if (gamepad1.y && !lastHook) {
+    } 
+    else if (gamepad1.y && !lastHook) {
       if (currentState.equals(HOVER_HIGH)) {
         currentState = CLIP_HIGH;
-      } else {
+      } 
+      else {
         currentState = HOVER_HIGH;
       }
-    } else if (gamepad1.x) {
+    } 
+    else if (gamepad1.x) {
       currentState = LOW_BASKET;
-    } else if (gamepad1.left_bumper) {
+    } 
+    else if (gamepad1.left_bumper) {
       currentState = INIT;
     }
     lastGrab = gamepad1.b;
@@ -210,6 +222,8 @@ public class Starterbot2025Mecanum extends LinearOpMode {
     telemetry.addData("Arm Power", arm.getPower());
     telemetry.addData("Wrist Position", wrist.getCurrentPosition());
     telemetry.addData("Wrist Power", wrist.getPower());
+    telemetry.addData("Wrist2 Position", wrist2.getCurrentPosition());
+    telemetry.addData("Wrist2 Power", wrist2.getPower());
     telemetry.update();
   }
 
