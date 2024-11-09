@@ -175,7 +175,7 @@ public class Starterbot2025Mecanum extends LinearOpMode {
     Strafe = gamepad1.left_stick_x;
     Turn = gamepad1.right_stick_x;
     leftFrontPower = (FB - Strafe * 0.7) - Turn;
-    rightFrontPower = FB + Strafe * 0.7 + Turn;
+    rightFrontPower = (FB + Strafe * 0.7) + Turn;
     leftBackPower = (FB + Strafe * 1) - Turn;
     rightBackPower = (FB - Strafe * 1) + Turn;
     // The below section "clips" the values to remain within the expected range
