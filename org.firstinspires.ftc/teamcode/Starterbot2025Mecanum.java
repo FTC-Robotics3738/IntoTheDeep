@@ -15,6 +15,7 @@ public class Starterbot2025Mecanum extends LinearOpMode {
   private DcMotor frontRight;
   private DcMotor backLeft;
   private DcMotor arm;
+  private DcMotor arm2;
   private DcMotor wrist;
   private DcMotor wrist2;
   private Servo claw;
@@ -46,6 +47,7 @@ public class Starterbot2025Mecanum extends LinearOpMode {
     frontRight = hardwareMap.get(DcMotor.class, "frontRight");
     backLeft = hardwareMap.get(DcMotor.class, "backLeft");
     arm = hardwareMap.get(DcMotor.class, "arm");
+    arm2 = hardwareMap.get(DcMotor.class, "arm2");
     wrist = hardwareMap.get(DcMotor.class, "wrist");
     wrist2 = hardwareMap.get(DcMotor.class, "wrist2");
     claw = hardwareMap.get(Servo.class, "claw");
@@ -54,6 +56,7 @@ public class Starterbot2025Mecanum extends LinearOpMode {
     // Put initialization blocks here.
     frontLeft.setDirection(DcMotor.Direction.REVERSE);
     backRight.setDirection(DcMotor.Direction.REVERSE);
+    arm2.setDirection(DcMotor.Direction.REVERSE);
     wrist2.setDirection(DcMotor.Direction.REVERSE);
     frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -84,10 +87,13 @@ public class Starterbot2025Mecanum extends LinearOpMode {
         MECANUM_DRIVE();
         TELEMETRY();
         arm.setTargetPosition(targetArm);
+        arm2.setTargetPosition(targetArm);
         wrist.setTargetPosition(targetWrist);
         wrist2.setTargetPosition(targetWrist);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(1);
+        arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm2.setPower(1);
         wrist.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wrist2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wrist.setPower(1);
@@ -220,6 +226,8 @@ public class Starterbot2025Mecanum extends LinearOpMode {
     telemetry.addData("Claw Position", clawOpen ? "Open" : "Closed");
     telemetry.addData("Arm Position", arm.getCurrentPosition());
     telemetry.addData("Arm Power", arm.getPower());
+    telemetry.addData("Arm2 Position", arm2.getCurrentPosition());
+    telemetry.addData("Arm2 Power", arm2.getPower());
     telemetry.addData("Wrist Position", wrist.getCurrentPosition());
     telemetry.addData("Wrist Power", wrist.getPower());
     telemetry.addData("Wrist2 Position", wrist2.getCurrentPosition());
