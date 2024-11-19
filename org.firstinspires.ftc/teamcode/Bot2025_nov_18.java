@@ -19,14 +19,14 @@ public class Bot2025_nov_18 extends LinearOpMode {
   //private DcMotor wrist;
   //private DcMotor wrist2;
   private Servo claw;
-  private CRServo intake;
+  //private CRServo intake;
 
   String currentState;
   boolean lastGrab;
   boolean clawOpen;
   boolean lastBump;
   int targetArm;
-  String INTAKE;
+  //String INTAKE;
   String LOW_BASKET;
   String INIT;
   boolean lastHook;
@@ -51,7 +51,7 @@ public class Bot2025_nov_18 extends LinearOpMode {
     //wrist = hardwareMap.get(DcMotor.class, "wrist");
     //wrist2 = hardwareMap.get(DcMotor.class, "wrist2");
     claw = hardwareMap.get(Servo.class, "claw");
-    intake = hardwareMap.get(CRServo.class, "intake");
+    //intake = hardwareMap.get(CRServo.class, "intake");
 
     // Put initialization blocks here.
     frontLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -62,7 +62,7 @@ public class Bot2025_nov_18 extends LinearOpMode {
     backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     MANUAL = "MANUAL";
-    INTAKE = "INTAKE";
+    //INTAKE = "INTAKE";
     WALL_GRAB = "WALL_GRAB";
     WALL_UNHOOK = "WALL_UNHOOK";
     HOVER_HIGH = "HOVER_HIGH";
@@ -81,7 +81,7 @@ public class Bot2025_nov_18 extends LinearOpMode {
         GAMEPAD_INPUT_STATE();
         GAMEPAD_INPUT_TOGGLE();
         GAMEPAD_INPUT_MANUAL();
-        GAMEPAD_INTAKE();
+        //GAMEPAD_INTAKE();
         STATE_MACHINE();
         MECANUM_DRIVE();
         TELEMETRY();
@@ -106,7 +106,7 @@ public class Bot2025_nov_18 extends LinearOpMode {
    */
   private void GAMEPAD_INPUT_STATE() {
     if (gamepad1.a) {
-      currentState = INTAKE;
+      //currentState = INTAKE;
     } 
     else if (gamepad1.b && !lastGrab) {
       if (currentState.equals(WALL_GRAB)) {
@@ -152,7 +152,7 @@ public class Bot2025_nov_18 extends LinearOpMode {
   /**
    * Describe this function...
    */
-  private void GAMEPAD_INTAKE() {
+  /*private void GAMEPAD_INTAKE() {
     if (gamepad1.right_trigger > 0.1) {
       intake.setPower(1);
     } else if (gamepad1.left_trigger > 0.1) {
@@ -160,7 +160,7 @@ public class Bot2025_nov_18 extends LinearOpMode {
     } else {
       intake.setPower(0);
     }
-  }
+  }*/
 
   /**
    * Describe this function...
@@ -241,10 +241,10 @@ public class Bot2025_nov_18 extends LinearOpMode {
     if (currentState.equals(INIT)) {
       targetArm = 300;
       //targetWrist = 0;
-    } else if (currentState.equals(INTAKE)) {
+    } /*else if (currentState.equals(INTAKE)) {
       targetArm = 450;
       //targetWrist = 270;
-    } else if (currentState.equals(WALL_GRAB)) {
+    } */else if (currentState.equals(WALL_GRAB)) {
       targetArm = 1100;
       //targetWrist = 10;
     } else if (currentState.equals(WALL_UNHOOK)) {
@@ -264,3 +264,4 @@ public class Bot2025_nov_18 extends LinearOpMode {
     }
   }
 }
+
