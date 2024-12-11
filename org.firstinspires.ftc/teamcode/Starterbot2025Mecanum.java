@@ -6,8 +6,9 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
+import java.lang.Math.*;
 
-@TeleOp(name = "Starterbot2025Mecanum (Blocks to Java)")
+@TeleOp(name = "SecondaryTeleOp")
 public class Starterbot2025Mecanum extends LinearOpMode {
 
   private DcMotor frontLeft;
@@ -17,9 +18,7 @@ public class Starterbot2025Mecanum extends LinearOpMode {
   private DcMotor arm;
   private DcMotor arm2;
   private DcMotor wrist;
-  private DcMotor wrist2;
   private Servo claw;
-  private CRServo intake;
 
   String currentState;
   boolean lastGrab;
@@ -36,6 +35,7 @@ public class Starterbot2025Mecanum extends LinearOpMode {
   String WALL_UNHOOK;
   String HOVER_HIGH;
   String CLIP_HIGH;
+  boolean goingUp;
 
   /**
    * This function is executed when this Op Mode is selected.
@@ -46,24 +46,20 @@ public class Starterbot2025Mecanum extends LinearOpMode {
     backRight = hardwareMap.get(DcMotor.class, "backRight");
     frontRight = hardwareMap.get(DcMotor.class, "frontRight");
     backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-    arm = hardwareMap.get(DcMotor.class, "arm");
-    arm2 = hardwareMap.get(DcMotor.class, "arm2");
-    wrist = hardwareMap.get(DcMotor.class, "wrist");
-    wrist2 = hardwareMap.get(DcMotor.class, "wrist2");
+    arm = hardwareMap.get(DcMotor.class, "armLeft");
+    arm2 = hardwareMap.get(DcMotor.class, "armRight");
+    // wrist = hardwareMap.get(DcMotor.class, "wrist");
     claw = hardwareMap.get(Servo.class, "claw");
-    intake = hardwareMap.get(CRServo.class, "intake");
 
     // Put initialization blocks here.
     frontLeft.setDirection(DcMotor.Direction.REVERSE);
     backRight.setDirection(DcMotor.Direction.REVERSE);
     arm2.setDirection(DcMotor.Direction.REVERSE);
-    wrist2.setDirection(DcMotor.Direction.REVERSE);
     frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     MANUAL = "MANUAL";
-    INTAKE = "INTAKE";
     WALL_GRAB = "WALL_GRAB";
     WALL_UNHOOK = "WALL_UNHOOK";
     HOVER_HIGH = "HOVER_HIGH";
@@ -82,22 +78,19 @@ public class Starterbot2025Mecanum extends LinearOpMode {
         GAMEPAD_INPUT_STATE();
         GAMEPAD_INPUT_TOGGLE();
         GAMEPAD_INPUT_MANUAL();
-        GAMEPAD_INTAKE();
         STATE_MACHINE();
         MECANUM_DRIVE();
         TELEMETRY();
         arm.setTargetPosition(targetArm);
         arm2.setTargetPosition(targetArm);
-        wrist.setTargetPosition(targetWrist);
-        wrist2.setTargetPosition(targetWrist);
+        // wrist.setTargetPosition(targetWrist);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setPower(1);
+        // arm.setPower(1);
         arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm2.setPower(1);
-        wrist.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wrist2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wrist.setPower(1);
-        wrist2.setPower(1);
+        if(targetArm < 0)
+        {
+          targetArm = 0;
+        }
       }
     }
   }
@@ -107,32 +100,34 @@ public class Starterbot2025Mecanum extends LinearOpMode {
    */
   private void GAMEPAD_INPUT_STATE() {
     if (gamepad1.a) {
-      currentState = INTAKE;
+      //claw close;
+      claw.setPosition(0.1);
     } 
-    else if (gamepad1.b && !lastGrab) {
-      if (currentState.equals(WALL_GRAB)) {
-        currentState = WALL_UNHOOK;
-      } 
-      else {
-        currentState = WALL_GRAB;
-      }
+    else if (gamepad1.b) {
+      //claw open; 
+      claw.setPosition(0.9);
     } 
-    else if (gamepad1.y && !lastHook) {
-      if (currentState.equals(HOVER_HIGH)) {
-        currentState = CLIP_HIGH;
-      } 
-      else {
-        currentState = HOVER_HIGH;
-      }
+    else if (gamepad1.y) {
+      // raise arm
+      // arm.setTargetPosition(100);
+      goingUp = true;
+      Math.min(targetArm+=10, 1400);
+      arm.setPower(.5);
+      arm2.setPower(.5);
     } 
     else if (gamepad1.x) {
-      currentState = LOW_BASKET;
+      //drop arm;
+      goingUp = false;
+      // Math.max(targetArm-=100, 0);
+      targetArm = 0;
+      // targetArm-=100;
+      // arm.setTargetPosition(1000);
+      arm.setPower(-0.5);
+      arm2.setPower(-0.5);
     } 
     else if (gamepad1.left_bumper) {
       currentState = INIT;
     }
-    lastGrab = gamepad1.b;
-    lastHook = gamepad1.y;
   }
 
   /**
@@ -142,25 +137,12 @@ public class Starterbot2025Mecanum extends LinearOpMode {
     if (gamepad1.right_bumper && !lastBump) {
       clawOpen = !clawOpen;
       if (clawOpen) {
-        claw.setPosition(0.7);
+        claw.setPosition(0.0);
       } else {
         claw.setPosition(0.9);
       }
     }
     lastBump = gamepad1.right_bumper;
-  }
-
-  /**
-   * Describe this function...
-   */
-  private void GAMEPAD_INTAKE() {
-    if (gamepad1.right_trigger > 0.1) {
-      intake.setPower(1);
-    } else if (gamepad1.left_trigger > 0.1) {
-      intake.setPower(-1);
-    } else {
-      intake.setPower(0);
-    }
   }
 
   /**
@@ -187,10 +169,10 @@ public class Starterbot2025Mecanum extends LinearOpMode {
     // The below section "clips" the values to remain within the expected range
     max = JavaUtil.maxOfList(JavaUtil.createListWith(Math.abs(leftFrontPower), Math.abs(rightFrontPower), Math.abs(leftBackPower), Math.abs(rightBackPower)));
     if (max > 1) {
-      leftFrontPower = leftFrontPower / max;
-      rightFrontPower = rightFrontPower / max;
-      leftBackPower = (float) (leftBackPower / max);
-      rightBackPower = (float) (rightBackPower / max);
+      leftFrontPower = leftFrontPower / max * FB;
+      rightFrontPower = rightFrontPower / max * FB;
+      leftBackPower = (float) (leftBackPower / max) * FB;
+      rightBackPower = (float) (rightBackPower / max) * FB;
     }
     // Setting Motor Power
     frontLeft.setPower(leftFrontPower);
@@ -205,16 +187,16 @@ public class Starterbot2025Mecanum extends LinearOpMode {
   private void GAMEPAD_INPUT_MANUAL() {
     if (gamepad1.dpad_up) {
       currentState = MANUAL;
-      targetArm += 50;
+      Math.min(targetArm+=10, 1400);
     } else if (gamepad1.dpad_down) {
       currentState = MANUAL;
-      targetArm += -50;
-    } else if (gamepad1.dpad_left) {
-      currentState = MANUAL;
-      targetWrist += 20;
-    } else if (gamepad1.dpad_right) {
-      currentState = MANUAL;
-      targetWrist += -20;
+      Math.max(targetArm-=10, 0);
+    // } else if (gamepad1.dpad_left) {
+    //   currentState = MANUAL;
+    //   targetWrist += 20;
+    // } else if (gamepad1.dpad_right) {
+    //   currentState = MANUAL;
+    //   targetWrist += -20;
     }
   }
 
@@ -228,10 +210,9 @@ public class Starterbot2025Mecanum extends LinearOpMode {
     telemetry.addData("Arm Power", arm.getPower());
     telemetry.addData("Arm2 Position", arm2.getCurrentPosition());
     telemetry.addData("Arm2 Power", arm2.getPower());
-    telemetry.addData("Wrist Position", wrist.getCurrentPosition());
-    telemetry.addData("Wrist Power", wrist.getPower());
-    telemetry.addData("Wrist2 Position", wrist2.getCurrentPosition());
-    telemetry.addData("Wrist2 Power", wrist2.getPower());
+    telemetry.addData("TargetArm destination", targetArm);
+    // telemetry.addData("Wrist Position", wrist.getCurrentPosition());
+    // telemetry.addData("Wrist Power", wrist.getPower());
     telemetry.update();
   }
 
@@ -240,29 +221,28 @@ public class Starterbot2025Mecanum extends LinearOpMode {
    */
   private void STATE_MACHINE() {
     if (currentState.equals(INIT)) {
-      targetArm = 300;
+      targetArm = 0;
       targetWrist = 0;
-    } else if (currentState.equals(INTAKE)) {
-      targetArm = 450;
-      targetWrist = 270;
-    } else if (currentState.equals(WALL_GRAB)) {
-      targetArm = 1100;
-      targetWrist = 10;
-    } else if (currentState.equals(WALL_UNHOOK)) {
-      targetArm = 1700;
-      targetWrist = 10;
-    } else if (currentState.equals(HOVER_HIGH)) {
-      targetArm = 2600;
-      targetWrist = 10;
-    } else if (currentState.equals(CLIP_HIGH)) {
-      targetArm = 2100;
-      targetWrist = 10;
-    } else if (currentState.equals(LOW_BASKET)) {
-      targetArm = 2500;
-      targetWrist = 270;
-    } else {
-      currentState = MANUAL;
+      claw.setPosition(0.0);
     }
+    // } else if (currentState.equals(WALL_GRAB)) {
+    //   targetArm = 1100;
+    //   targetWrist = 10;
+    // } else if (currentState.equals(WALL_UNHOOK)) {
+    //   targetArm = 1700;
+    //   targetWrist = 10;
+    // } else if (currentState.equals(HOVER_HIGH)) {
+    //   targetArm = 2600;
+    //   targetWrist = 10;
+    // } else if (currentState.equals(CLIP_HIGH)) {
+    //   targetArm = 2100;
+    //   targetWrist = 10;
+    // } else if (currentState.equals(LOW_BASKET)) {
+    //   targetArm = 2500;
+    //   targetWrist = 270;
+    // } else {
+    //   currentState = MANUAL;
+    // }
   }
 }
 
