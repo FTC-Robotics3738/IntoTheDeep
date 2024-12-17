@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import java.lang.Math.*;
 
 @TeleOp(name = "SecondaryTeleOp")
-public class Starterbot2025Mecanum extends LinearOpMode {
+public class Mechanum2025 extends LinearOpMode {
 
   private DcMotor frontLeft;
   private DcMotor backRight;
@@ -162,10 +162,10 @@ public class Starterbot2025Mecanum extends LinearOpMode {
     FB = -gamepad1.left_stick_y;
     Strafe = gamepad1.left_stick_x;
     Turn = gamepad1.right_stick_x;
-    leftFrontPower = (FB - Strafe * 0.7) - Turn;
-    rightFrontPower = (FB + Strafe * 0.7) + Turn;
-    leftBackPower = (FB + Strafe * 1) - Turn;
-    rightBackPower = (FB - Strafe * 1) + Turn;
+    leftFrontPower = (FB + Strafe * 0.7) + Turn;
+    rightFrontPower = (FB - Strafe * 0.7) - Turn;
+    leftBackPower = (FB - Strafe * 1) + Turn;
+    rightBackPower = (FB + Strafe * 1) - Turn;
     // The below section "clips" the values to remain within the expected range
     max = JavaUtil.maxOfList(JavaUtil.createListWith(Math.abs(leftFrontPower), Math.abs(rightFrontPower), Math.abs(leftBackPower), Math.abs(rightBackPower)));
     if (max > 1) {
@@ -224,6 +224,8 @@ public class Starterbot2025Mecanum extends LinearOpMode {
       targetArm = 0;
       targetWrist = 0;
       claw.setPosition(0.0);
+      arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     // } else if (currentState.equals(WALL_GRAB)) {
     //   targetArm = 1100;
