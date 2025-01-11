@@ -111,16 +111,14 @@ public class Mechanum2025 extends LinearOpMode {
       // raise arm
       // arm.setTargetPosition(100);
       goingUp = true;
-      // Math.min(targetArm+=10, 1400);
-      targetArm = 1220;
+      Math.min(targetArm+=10, 1400);
       arm.setPower(.5);
       arm2.setPower(.5);
     } 
     else if (gamepad1.x) {
       //drop arm;
       goingUp = false;
-      // Math.min(targetArm-=10, 600);
-      targetArm = 531;
+      Math.min(targetArm-=10, 600);
       // Math.max(targetArm-=100, 0);
       // targetArm = 0;
       // targetArm-=100;
